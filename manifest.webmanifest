@@ -1,15 +1,13 @@
 {
-  "id": "./",
-  "name": "Math Arena — A Jornada da Matemática",
+  "name": "Math Arena — Pixel Adventure",
   "short_name": "Math Arena",
-  "description": "Math Arena: 150 fases em 10 regiões, aventura RPG 2D e plataforma com desafios matemáticos.",
+  "description": "Jogo educativo de plataforma com 150 fases de matemática",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "any",
-  "background_color": "#08162d",
-  "theme_color": "#091b37",
-  "lang": "pt-BR",
+  "orientation": "landscape",
+  "background_color": "#071a30",
+  "theme_color": "#102a4b",
   "icons": [
     {
       "src": "icon-192.png",
@@ -23,12 +21,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  "categories": [
-    "education",
-    "games"
-  ],
-  "display_override": [
-    "standalone"
   ]
 }
