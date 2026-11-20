@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Math Arena — A Jornada da Matemática",
   "short_name": "Math Arena",
-  "description": "RPG 2D educativo: explore a Sibéria e resolva desafios matemáticos.",
+  "description": "Math Arena: 150 fases em 10 regiões, aventura RPG 2D e plataforma com desafios matemáticos.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
