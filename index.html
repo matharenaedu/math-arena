@@ -86,7 +86,7 @@ for(let i=0;i<150;i++){
  const z=zones[zones.length-1];if(level===4||level===9||level===14){z.encounter={kind:level===14?'boss':'mini',name:level===14?myth.boss:myth.mini,emoji:level===14?myth.dragon:(level===4?'👹':'🧙'),color:myth.color};z.length=Math.max(z.length,2850);z.quests.push(makeQuestion(i,2));z.quests[z.quests.length-1].x=z.length-570;z.quests[z.quests.length-1].title='⚔️ '+z.encounter.name+' — Selo de poder';z.quests[z.quests.length-1].symbol='⚔';z.quests[z.quests.length-1].isBossSeal=true;}
 }
 
-const canvas=$('game'),ctx=canvas.getContext('2d');let W=0,H=0,dpr=1,cam=0,frame=0,stage=0,player={x:75,y:0,vx:0,vy:0,grounded:false,jumps:0,face:1,inv:0},keys={left:false,right:false,jump:false,dash:false},dialog=false,near=null,coins=[],enemies=[],platforms=[],hazards=[],particles=[],checkpoint=75,toastUntil=0,last=0,actionLatch=false,battle=null,projectiles=[],battleTick=0;function resize(){const vw=Math.max(1,window.innerWidth),vh=Math.max(1,window.innerHeight);H=540;W=Math.round(H*vw/vh);dpr=1;canvas.width=Math.ceil(W/2);canvas.height=270;ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);ctx.imageSmoothingEnabled=false}addEventListener('resize',resize);function ground(){return H-78}function platformY(){return ground()-105}function startStage(n){stage=Math.max(0,Math.min(149,n));progress.stage=stage;progress.unlocked=Math.max(progress.unlocked,stage);progress.hearts=Math.min(5,Math.max(1,progress.hearts||5));persist();show('game');resize();player={x:75,y:ground()-48,vx:0,vy:0,grounded:true,jumps:0,face:1,inv:0};cam=0;checkpoint=75;const z=zones[stage];battle=z.encounter?{hp:z.encounter.kind==='boss'?(z.world>=7?5:z.world>=3?4:3):2,max:z.encounter.kind==='boss'?(z.world>=7?5:z.world>=3?4:3):2,shield:false,vulnerable:0,won:false,attack:0,inv:0}:null;projectiles=[];battleTick=0;coins=Array.from({length:15},(_,i)=>({x:180+i*(z.length-320)/15,y:i%3===0?ground()-165:ground()-64,taken:false}));platforms=Array.from({length:8},(_,i)=>({x:320+i*230,y:platformY()-(i%3)*24,w:115,h:16,moving:i%3===1,offset:i*1.4}));hazards=Array.from({length:5},(_,i)=>({x:450+i*325,w:65}));enemies=Array.from({length:3+(stage%3)},(_,i)=>({x:650+i*460,base:650+i*460,alive:true,emoji:mythical[z.world].minions[(i+stage)%3],flying:i%4===2}));if(z.encounter){enemies.push(...Array.from({length:z.encounter.kind==='boss'?4:2},(_,i)=>({x:z.length-970+i*95,base:z.length-970+i*95,alive:true,emoji:mythical[z.world].minions[i%3],flying:i%2===0})));} particles=Array.from({length:65},()=>({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,s:1+Math.random()*2}));toast(z.encounter?'⚔️ '+z.name+' — '+(z.encounter.kind==='boss'?'CHEFE FINAL: ':'MINICHEFE: ')+z.encounter.name:'📍 '+z.name+' — Pule e bata nas caixas matemáticas!',3500);updateHUD()};function updateHUD(){$('hname').textContent='🧑 '+profile.name;$('harea').textContent=regions[Math.floor(stage/15)][1]+' '+(stage+1)+'/150 '+zones[stage].name;$('hhearts').textContent='❤️'.repeat(Math.max(0,progress.hearts));$('hstats').textContent='🪙 '+progress.coins+' · ⭐ '+progress.xp+' XP'}function toast(t,ms=1900){$('toast').textContent=t;$('toast').classList.remove('hidden');toastUntil=performance.now()+ms}function solve(q){dialog=true;keys.left=keys.right=keys.jump=keys.dash=false;$('modal').classList.remove('hidden');$('mtitle').textContent=q.title;$('mtext').textContent=q.text;$('feedback').textContent='';$('choices').innerHTML='';q.opts.forEach((o,i)=>{const b=document.createElement('button');b.textContent=o;b.onclick=()=>{if(i===q.ok){if(q.isBossSeal&&battle&&!battle.won){battle.shield=true;battle.vulnerable=700;$('feedback').textContent='✓ Escudo desativado! Feche esta janela e salte sobre o chefe antes que o escudo volte!';toast('⚡ Escudo desativado! Ataque o ponto fraco!',2600)}else{if(!progress.solved.includes(q.id)){progress.solved.push(q.id);progress.xp+=150;progress.coins+=20}persist();updateHUD();$('feedback').textContent='✓ '+q.explain+' +150 XP'}[...$('choices').children].forEach(c=>c.disabled=true)}else $('feedback').textContent='Ainda não! Pense na operação e tente novamente. Você não perde XP.'};$('choices').append(b)})}function closeModal(){dialog=false;$('modal').classList.add('hidden')}$('mclose').onclick=closeModal;function interact(){if(dialog)return;if(near){solve(near);return}toast('Pule e bata por baixo nas caixas com símbolos matemáticos!')};// Controles gestuais: joystick flutuante à esquerda, salto e corrida por gestos à direita.
+const canvas=$('game'),ctx=canvas.getContext('2d');let W=0,H=0,dpr=1,cam=0,frame=0,stage=0,player={x:75,y:0,vx:0,vy:0,grounded:false,jumps:0,face:1,inv:0},keys={left:false,right:false,jump:false,dash:false},dialog=false,near=null,coins=[],enemies=[],platforms=[],hazards=[],particles=[],checkpoint=75,toastUntil=0,last=0,actionLatch=false,battle=null,projectiles=[],battleTick=0;function resize(){const vw=Math.max(1,window.innerWidth),vh=Math.max(1,window.innerHeight);H=540;W=Math.round(H*vw/vh);dpr=1;canvas.width=Math.ceil(W/2);canvas.height=270;ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);ctx.imageSmoothingEnabled=false}addEventListener('resize',resize);function ground(){return H-78}function platformY(){return ground()-105}function startStage(n){stage=Math.max(0,Math.min(149,n));progress.stage=stage;progress.unlocked=Math.max(progress.unlocked,stage);progress.hearts=Math.min(5,Math.max(1,progress.hearts||5));persist();show('game');resize();player={x:75,y:ground()-48,vx:0,vy:0,grounded:true,jumps:0,face:1,inv:65};cam=0;checkpoint=75;const z=zones[stage];battle=z.encounter?{hp:z.encounter.kind==='boss'?(z.world>=7?5:z.world>=3?4:3):2,max:z.encounter.kind==='boss'?(z.world>=7?5:z.world>=3?4:3):2,shield:false,vulnerable:0,won:false,attack:0,inv:0}:null;projectiles=[];battleTick=0;coins=Array.from({length:15},(_,i)=>({x:180+i*(z.length-320)/15,y:i%3===0?ground()-165:ground()-64,taken:false}));platforms=Array.from({length:8},(_,i)=>({x:320+i*230,y:platformY()-(i%3)*24,w:115,h:16,moving:i%3===1,offset:i*1.4}));hazards=Array.from({length:5},(_,i)=>({x:450+i*325,w:65}));enemies=Array.from({length:3+(stage%3)},(_,i)=>({x:650+i*460,base:650+i*460,alive:true,emoji:mythical[z.world].minions[(i+stage)%3],flying:i%4===2}));if(z.encounter){enemies.push(...Array.from({length:z.encounter.kind==='boss'?4:2},(_,i)=>({x:z.length-970+i*95,base:z.length-970+i*95,alive:true,emoji:mythical[z.world].minions[i%3],flying:i%2===0})));} particles=Array.from({length:65},()=>({x:Math.random()*W,y:Math.random()*H,r:1+Math.random()*2,s:1+Math.random()*2}));toast(z.encounter?'⚔️ '+z.name+' — '+(z.encounter.kind==='boss'?'CHEFE FINAL: ':'MINICHEFE: ')+z.encounter.name:'📍 '+z.name+' — Pule e bata nas caixas matemáticas!',3500);updateHUD()};function updateHUD(){$('hname').textContent='🧑 '+profile.name;$('harea').textContent=regions[Math.floor(stage/15)][1]+' '+(stage+1)+'/150 '+zones[stage].name;$('hhearts').textContent='❤️'.repeat(Math.max(0,progress.hearts));$('hstats').textContent='🪙 '+progress.coins+' · ⭐ '+progress.xp+' XP'}function toast(t,ms=1900){$('toast').textContent=t;$('toast').classList.remove('hidden');toastUntil=performance.now()+ms}function solve(q){dialog=true;keys.left=keys.right=keys.jump=keys.dash=false;$('modal').classList.remove('hidden');$('mtitle').textContent=q.title;$('mtext').textContent=q.text;$('feedback').textContent='';$('choices').innerHTML='';q.opts.forEach((o,i)=>{const b=document.createElement('button');b.textContent=o;b.onclick=()=>{if(i===q.ok){if(q.isBossSeal&&battle&&!battle.won){battle.shield=true;battle.vulnerable=700;$('feedback').textContent='✓ Escudo desativado! Feche esta janela e salte sobre o chefe antes que o escudo volte!';toast('⚡ Escudo desativado! Ataque o ponto fraco!',2600)}else{if(!progress.solved.includes(q.id)){progress.solved.push(q.id);progress.xp+=150;progress.coins+=20}persist();updateHUD();$('feedback').textContent='✓ '+q.explain+' +150 XP'}[...$('choices').children].forEach(c=>c.disabled=true)}else $('feedback').textContent='Ainda não! Pense na operação e tente novamente. Você não perde XP.'};$('choices').append(b)})}function closeModal(){dialog=false;player.inv=Math.max(player.inv,70);$('modal').classList.add('hidden')}$('mclose').onclick=closeModal;function interact(){if(dialog)return;if(near){solve(near);return}toast('Pule e bata por baixo nas caixas com símbolos matemáticos!')};// Controles gestuais: joystick flutuante à esquerda, salto e corrida por gestos à direita.
 const moveZone=$('moveZone'),actionZone=$('actionZone'),stickBase=$('stickBase'),stickKnob=$('stickKnob'),touchGuide=$('touchGuide');
 let movePointer=null,actionPointer=null,actionStart=null,lastActionTap=0;
 function resetMove(){movePointer=null;keys.left=false;keys.right=false;stickBase.style.opacity='0';stickKnob.style.transform='translate(-50%,-50%)'}
@@ -101,12 +101,12 @@ function endAction(e){if(e.pointerId!==actionPointer)return;const t=performance.
 for(const ev of ['pointerup','pointercancel','lostpointercapture'])actionZone.addEventListener(ev,endAction);
 setTimeout(()=>touchGuide.classList.add('fade'),7500);
 addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp',' ','Shift','e','E'].includes(e.key))e.preventDefault();if(e.key==='ArrowLeft'||e.key==='a')keys.left=true;if(e.key==='ArrowRight'||e.key==='d')keys.right=true;if(e.key==='ArrowUp'||e.key==='w'||e.key===' ')keys.jump=true;if(e.key==='Shift')keys.dash=true;if((e.key==='e'||e.key==='E')&&!e.repeat)interact();if(e.key==='Escape'&&dialog)closeModal()});addEventListener('keyup',e=>{if(e.key==='ArrowLeft'||e.key==='a')keys.left=false;if(e.key==='ArrowRight'||e.key==='d')keys.right=false;if(e.key==='ArrowUp'||e.key==='w'||e.key===' ')keys.jump=false;if(e.key==='Shift')keys.dash=false});
-function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}function circle(x,y,r,c){ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}function text(t,x,y,size=15,color='#fff',align='center'){ctx.fillStyle=color;ctx.textAlign=align;ctx.font=`bold ${size}px system-ui`;ctx.fillText(t,x,y)}function damage(){if(player.inv>0)return;progress.hearts--;player.inv=85;player.vy=-9;player.vx=-player.face*5;updateHUD();if(progress.hearts<=0){progress.hearts=5;persist();startStage(stage);toast('💔 Sem vidas! Reiniciando esta fase com 5 vidas. As fases liberadas continuam salvas!',3200)}else toast('❤️ Cuidado com os perigos do gelo!')}
+function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}function circle(x,y,r,c){ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}function text(t,x,y,size=15,color='#fff',align='center'){ctx.fillStyle=color;ctx.textAlign=align;ctx.font=`bold ${size}px system-ui`;ctx.fillText(t,x,y)}function damage(cause='obstáculo'){if(player.inv>0||dialog)return;progress.hearts--;player.inv=85;player.vy=-9;player.vx=-player.face*5;updateHUD();if(progress.hearts<=0){progress.hearts=5;persist();startStage(stage);toast('💔 Sem vidas! Reiniciando esta fase com 5 vidas. As fases liberadas continuam salvas!',3200)}else toast('❤️ Dano: '+cause+'!')}
 function finishZone(){if(battle&&!battle.won){if(performance.now()>toastUntil)toast('⚔️ Derrote o chefe antes de atravessar o portal!',1800);return}const pending=zones[stage].quests.filter(q=>!progress.solved.includes(q.id));if(pending.length){if(performance.now()>toastUntil)toast('🔒 Resolva os '+pending.length+' desafios restantes para vencer e avançar',2400);return}if(stage<149){if(zones[stage].encounter){progress.coins+=zones[stage].encounter.kind==='boss'?250:90;progress.xp+=zones[stage].encounter.kind==='boss'?750:300;toast('🏆 '+zones[stage].encounter.name+' derrotado! Recompensa recebida.',2800)}progress.stage=stage+1;progress.unlocked=Math.max(progress.unlocked,stage+1);progress.hearts=5;progress.xp+=200;persist();startStage(stage+1)}else{progress.finished=true;progress.xp+=1000;progress.coins+=500;persist();$('finalStats').textContent='Missões concluídas: '+progress.solved.length+' · Total de XP: '+progress.xp;show('complete')}}
 function tick(dt){const z=zones[stage],g=ground();frame+=dt;player.inv=Math.max(0,player.inv-dt);const speed=keys.dash?9:4.4;let dir=(keys.right?1:0)-(keys.left?1:0);player.vx=dir*speed;if(dir)player.face=dir;player.x=Math.max(20,Math.min(z.length-20,player.x+player.vx*dt));if(keys.jump&&!actionLatch&&player.jumps<2){player.vy=player.jumps===0?-12.5:-10.7;player.grounded=false;player.jumps++;actionLatch=true}if(!keys.jump)actionLatch=false;let oldTop=player.y,oldBottom=player.y+48;player.vy=Math.min(16,player.vy+.55*dt);player.y+=player.vy*dt;player.grounded=false;
 // Blocos de desafio: acertar por baixo ativa a missão, no estilo plataforma.
 if(player.vy<0){for(const q of z.quests){if(progress.solved.includes(q.id)||(q.isBossSeal&&battle&&(battle.won||battle.shield)))continue;const bx=q.x-24,by=g-132,bottom=by+42;if(player.x+13>bx&&player.x-13<bx+48&&oldTop>=bottom-4&&player.y<=bottom){player.y=bottom;player.vy=2.8;solve(q);toast('🎁 Caixa matemática ativada!',1200);break}}}
-if(player.y+48>=g){player.y=g-48;player.vy=0;player.grounded=true;player.jumps=0}for(const p of platforms){const px=p.x+(p.moving?Math.sin(frame*.023+p.offset)*45:0);if(player.vy>=0&&oldBottom<=p.y+9&&player.y+48>=p.y&&player.x+13>px&&player.x-13<px+p.w){player.y=p.y-48;player.vy=0;player.grounded=true;player.jumps=0}}if(player.y>H+80){damage();player.y=g-48}for(const h of hazards){if(player.grounded&&player.x>h.x&&player.x<h.x+h.w)damage()}for(const e of enemies){if(!e.alive)continue;e.x=e.base+Math.sin(frame*(.018+stage%5*.004)+e.base)* (35+(stage%4)*12);if(Math.abs(e.x-player.x)<30&&Math.abs((g-(e.flying?105:30))-(player.y+28))<45){if(player.vy>2&&oldBottom<g-32){e.alive=false;player.vy=-8;progress.xp+=30;updateHUD();toast('⚔️ Inimigo superado! +30 XP')}else damage()}}if(battle&&!battle.won){
+if(player.y+48>=g){player.y=g-48;player.vy=0;player.grounded=true;player.jumps=0}for(const p of platforms){const px=p.x+(p.moving?Math.sin(frame*.023+p.offset)*45:0);if(player.vy>=0&&oldBottom<=p.y+9&&player.y+48>=p.y&&player.x+13>px&&player.x-13<px+p.w){player.y=p.y-48;player.vy=0;player.grounded=true;player.jumps=0}}if(player.y>H+80){damage('queda');player.y=g-48}for(const h of hazards){const left=player.x-10,right=player.x+10,feet=player.y+48;const spikeLeft=h.x+4,spikeRight=h.x+h.w-4;if(player.grounded&&right>spikeLeft&&left<spikeRight&&feet>=g-18)damage('espinhos')}for(const e of enemies){if(!e.alive)continue;e.x=e.base+Math.sin(frame*(.018+stage%5*.004)+e.base)* (35+(stage%4)*12);const ey=g-(e.flying?105+Math.sin(frame*.035+e.base)*16:21);const overlapX=player.x+11>e.x-15&&player.x-11<e.x+15;const overlapY=player.y+48>ey-18&&player.y<ey+21;if(overlapX&&overlapY){if(player.vy>1.5&&oldBottom<=ey-10){e.alive=false;player.vy=-8;progress.xp+=30;updateHUD();toast('⚔️ Inimigo superado! +30 XP')}else damage('inimigo')}}if(battle&&!battle.won){
  battleTick+=dt; battle.inv=Math.max(0,battle.inv-dt);
  const bossX=z.length-290,bossY=g-125;
  if(battle.shield){battle.vulnerable-=dt;if(battle.vulnerable<=0){battle.shield=false;toast('🛡️ O escudo voltou! Acerte a caixa ⚔ novamente.',2000)}}
@@ -114,7 +114,7 @@ if(player.y+48>=g){player.y=g-48;player.vy=0;player.grounded=true;player.jumps=0
  const interval=z.encounter.kind==='boss'?Math.max(47,105-z.world*5):125;
  battle.attack+=dt;
  if(battle.attack>=interval){battle.attack=0;const dx=player.x-bossX,dy=(player.y+22)-bossY,m=Math.max(1,Math.hypot(dx,dy));const speed=3.1+z.world*.18;projectiles.push({x:bossX,y:bossY,vx:dx/m*speed,vy:dy/m*speed,r:11,life:260})}
- for(const shot of projectiles){shot.x+=shot.vx*dt;shot.y+=shot.vy*dt;shot.life-=dt;if(Math.hypot(shot.x-player.x,shot.y-(player.y+23))<24){shot.life=0;damage()}}
+ for(const shot of projectiles){shot.x+=shot.vx*dt;shot.y+=shot.vy*dt;shot.life-=dt;if(Math.hypot(shot.x-player.x,shot.y-(player.y+23))<24){shot.life=0;damage('projétil mágico')}}
  projectiles=projectiles.filter(shot=>shot.life>0);
  // Somente um salto por cima, durante a vulnerabilidade, causa dano ao chefe.
  if(battle.inv<=0&&Math.abs(player.x-bossX)<48&&Math.abs((player.y+48)-(bossY-18))<32){
@@ -122,7 +122,7 @@ if(player.y+48>=g){player.y=g-48;player.vy=0;player.grounded=true;player.jumps=0
    battle.hp--;battle.shield=false;battle.inv=95;player.vy=-11;player.y=bossY-65;progress.xp+=100;updateHUD();
    if(battle.hp<=0){battle.won=true;projectiles=[];const seal=z.quests.find(q=>q.isBossSeal);if(seal&&!progress.solved.includes(seal.id))progress.solved.push(seal.id);persist();toast('🏆 '+z.encounter.name+' derrotado! Portal liberado!',3200)}
    else toast('💥 Acerto! Faltam '+battle.hp+' golpes. Ative a caixa ⚔ novamente.',2400)
-  }else if(player.inv<=0)damage();
+  }else if(player.inv<=0)damage('chefe');
  }
 }
 for(const c of coins){if(!c.taken&&Math.abs(c.x-player.x)<23&&Math.abs(c.y-(player.y+24))<48){c.taken=true;progress.coins+=10;progress.xp+=5;updateHUD();persist()}}near=null;for(const q of z.quests)if(Math.abs(player.x-q.x)<75&&!progress.solved.includes(q.id))near=q;if(player.x>z.length-125&&player.grounded)finishZone();cam=Math.max(0,Math.min(z.length-W,player.x-W*.36));for(const p of particles){p.y+=p.s*dt;p.x-=.4*dt;if(p.y>H){p.y=0;p.x=Math.random()*W}if(p.x<0)p.x=W}if(performance.now()<toastUntil)$('toast').classList.remove('hidden');else $('toast').classList.add('hidden')}
@@ -166,9 +166,32 @@ function pixelSprite(x,y,coat,skin,hair,face=1,walk=0){
 function pixelEnemy(x,y,idx,fly){
  const colors=['#a6e8ff','#e4ac60','#92d9a5','#bf9bef','#ee94a3'];const c=colors[idx%5];
  px(x-15,y-12,30,24,'#20364a');px(x-12,y-15,24,24,c);px(x-9,y-20,6,6,c);px(x+3,y-20,6,6,c);
- px(x-7,y-4,4,5,'#1a2b42');px(x+4,y-4,4,5,'#1a2b42');
+ px(x-7,y-4,4,5,'#1a2b42');px(x+4,y-4,4,5,'#1a2b42');px(x-8,y-7,6,3,'#f5fcff');px(x+3,y-7,6,3,'#f5fcff');
  px(x-12,y+9,8,5,'#21354a');px(x+4,y+9,8,5,'#21354a');
  if(fly){px(x-25,y-8,11,8,'#d9efff');px(x+14,y-8,11,8,'#d9efff')}
+}
+// Detalhes gráficos determinísticos: não interferem nas colisões ou na física.
+function artHash(n){let v=Math.sin(n*127.1+43.7)*43758.5453;return v-Math.floor(v)}
+function artPine(x,base,scale=1,snow=true){
+ ctx.save();ctx.translate(Math.round(x),Math.round(base));ctx.scale(scale,scale);
+ px(-5,-20,10,22,'#594d56');px(-3,-18,4,15,'#8d6d64');
+ for(let k=0;k<4;k++){let y=-24-k*19,w=64-k*12;px(-w/2-3,y+3,w+6,20,'#153a53');px(-w/2,y,w,17,k%2?'#22677b':'#1d586d');px(-w/2+6,y+1,Math.max(6,w*.25),4,'#3d93a0');if(snow){px(-w/2+2,y-3,w-4,5,'#e4f8ff');px(-w/2+8,y+2,12,4,'#b2dce9')}}
+ px(-5,-100,10,7,snow?'#f3fdff':'#4da08a');ctx.restore();
+}
+function artRock(x,y,size=1){ctx.save();ctx.translate(x,y);ctx.scale(size,size);px(-14,-11,29,12,'#29465c');px(-11,-16,22,10,'#6c96a5');px(-7,-17,10,4,'#b6d9dd');px(6,-9,6,5,'#3c5e72');ctx.restore()}
+function artSnowdrift(x,y,w){px(x,y-5,w,7,'#f5fcff');px(x+7,y-9,w*.38,5,'#d4eef6');px(x+w*.62,y-7,w*.25,4,'#b2dfea')}
+function artCloud(x,y,s=1){ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(s,s);px(-36,0,80,14,'#b5e1ee');px(-30,-7,66,15,'#f0fbff');px(-14,-18,40,16,'#f0fbff');px(0,-25,20,12,'#ffffff');px(-26,8,50,4,'#91c5d8');ctx.restore()}
+function artCrystal(x,y,tint='#a8efff'){px(x-6,y-18,12,18,'#316b8c');px(x-3,y-27,6,18,tint);px(x+5,y-13,8,13,'#5caec7');px(x+8,y-20,3,9,'#e9ffff')}
+function artLantern(x,y){px(x-3,y-27,6,18,'#53677b');px(x-10,y-33,20,8,'#304d66');px(x-7,y-29,14,17,'#e8a837');px(x-4,y-26,8,11,'#ffe99a');px(x-10,y-12,20,4,'#273e5b')}
+function artBoss(x,y,kind,color,phase){
+ // Silhuetas diferentes para chefes: dragão, guardião, máquina, serpente e entidade cósmica.
+ const flap=Math.round(Math.sin(phase*.08)*6);
+ ctx.save();ctx.translate(Math.round(x),Math.round(y));
+ if(kind===0||kind===8){px(-74,-30+flap,37,42,'#305e8b');px(37,-30-flap,37,42,'#305e8b');px(-68,-24+flap,28,30,color);px(40,-24-flap,28,30,color);px(-32,-41,64,65,'#163f67');px(-26,-48,52,68,color);px(-28,-58,15,19,'#e5f6ff');px(13,-58,15,19,'#e5f6ff');px(-17,-24,10,10,'#17243b');px(9,-24,10,10,'#17243b');px(-8,-2,16,10,'#e8f7ff');px(-19,19,13,16,'#264c70');px(8,19,13,16,'#264c70')}
+ else if(kind===3||kind===9){px(-42,-47,84,79,'#18263e');px(-35,-43,70,70,color);px(-22,-52,44,18,'#2a395d');px(-25,-20,17,15,'#f4f7ff');px(8,-20,17,15,'#f4f7ff');px(-8,1,16,15,'#203a57');px(-49,-15,15,35,'#3b5375');px(34,-15,15,35,'#3b5375')}
+ else if(kind===6||kind===7){for(let k=0;k<5;k++){const xx=Math.sin(phase*.045+k)*10;px(-50+k*19+xx,14-k*13,30,25,k%2?color:'#22596a')}px(-13,-42,43,43,color);px(-5,-29,9,9,'#13243a');px(19,-29,9,9,'#13243a')}
+ else{px(-40,-40,80,70,'#34425b');px(-34,-44,68,68,color);px(-30,-54,20,20,'#26324d');px(10,-54,20,20,'#26324d');px(-20,-19,11,11,'#18243a');px(9,-19,11,11,'#18243a');px(-8,1,16,10,'#f3e9cc')}
+ ctx.restore();
 }
 function draw(){
  const z=zones[stage],g=ground(),wi=z.world;
@@ -185,57 +208,61 @@ function draw(){
  ['#15224e','#526db1','#b2c6f3','#4c5a8b','#cad3f2']
  ];
  const p=palettes[wi];
- // Céu em faixas suaves, montanhas e nuvens com paralaxe.
- px(0,0,W,H,p[1]);px(0,0,W,142,p[0]);px(0,142,W,70,p[1]);
- for(let i=0;i<11;i++){
-  let x=((i*187-cam*.12)%(W+230)+W+230)%(W+230)-100;
-  let y=67+(i%4)*34;
-  px(x,y,77,11,p[2]);px(x+13,y-12,46,12,p[2]);px(x+25,y-21,23,10,p[2]);
+ // Atmosfera com paralaxe, silhuetas distantes e detalhes desenhados à mão.
+ const icy=wi===0, warm=wi===1||wi===5, forest=wi===4||wi===6||wi===8;
+ rect(0,0,W,H,p[1]);
+ rect(0,0,W,Math.round(g*.39),p[0]);
+ rect(0,Math.round(g*.39),W,Math.round(g*.17),p[1]);
+ // Pontos de luz e estrelas no alto do céu (regiões noturnas).
+ if(wi===0||wi===3||wi===8||wi===9){for(let i=0;i<75;i++){const x=(i*137+17-cam*.045)%(W+100),y=23+artHash(i*7)*Math.max(60,g*.43);px(x,y,3,3,i%5===0?'#fffbe6':'#d1efff')}}
+ // Aurora polar na Sibéria, discreta atrás das montanhas.
+ if(icy){ctx.save();ctx.globalAlpha=.20;ctx.fillStyle='#8ef6d1';ctx.beginPath();ctx.moveTo(0,145);for(let x=0;x<=W+30;x+=20)ctx.lineTo(x,85+Math.sin(x*.008+frame*.002)*32);ctx.lineTo(W,205);ctx.lineTo(0,205);ctx.fill();ctx.restore()}
+ for(let i=0;i<Math.ceil(W/190)+3;i++){let x=i*195-((cam*.10)%195)-100,y=65+(i%3)*35;artCloud(x,y,.75+(i%3)*.15)}
+ // Duas cadeias de montanhas para dar profundidade.
+ for(let layer=0;layer<2;layer++){const step=layer?180:255,off=layer?cam*.32:cam*.14;for(let i=-2;i<Math.ceil(W/step)+4;i++){
+ const x=i*step-(off%step),top=g-(layer?168:260)-(i%3)*17;
+ ctx.fillStyle=layer?p[3]:'#84b4c7';ctx.beginPath();ctx.moveTo(x-step*.68,g);ctx.lineTo(x,top);ctx.lineTo(x+step*.7,g);ctx.fill();
+ if(icy||wi===4||wi===8){ctx.fillStyle=layer?'#d2edf3':'#f5fdff';ctx.beginPath();ctx.moveTo(x-26,top+46);ctx.lineTo(x,top);ctx.lineTo(x+30,top+46);ctx.lineTo(x+10,top+36);ctx.lineTo(x,top+45);ctx.lineTo(x-11,top+35);ctx.fill()}
+ }}
+ // Camada próxima: árvores de tamanhos variados e vegetação.
+ const treeStep=112;for(let i=-1;i<Math.ceil(W/treeStep)+3;i++){
+ const x=i*treeStep-(cam*.52%treeStep),s=.68+artHash(i+wi*17)*.35;
+ if(icy||forest)artPine(x,g-5,s,icy||wi===4||wi===8);
+ else {px(x-5,g-45,10,45,'#64524f');px(x-22,g-76,44,24,p[3]);px(x-15,g-96,30,24,p[2]);px(x-5,g-104,10,12,p[2])}
  }
- for(let i=0;i<11;i++){
-  let x=i*230-cam*.21,peak=g-245-(i%3)*18;
-  ctx.fillStyle=i%2?p[3]:'#77adc2';ctx.beginPath();ctx.moveTo(x-140,g);ctx.lineTo(x,peak);ctx.lineTo(x+150,g);ctx.fill();
-  ctx.fillStyle=p[2];ctx.beginPath();ctx.moveTo(x-39,peak+65);ctx.lineTo(x,peak);ctx.lineTo(x+42,peak+65);ctx.lineTo(x+20,peak+55);ctx.lineTo(x+6,peak+68);ctx.lineTo(x-8,peak+55);ctx.fill();
- }
- // Floresta intermediária em escala menor, deixando as plataformas visíveis.
- for(let i=0;i<24;i++){
-  let x=i*115-cam*.48;
-  if(wi===0||wi===4||wi===6||wi===8)pixelTree(x,g,p[3],i);
-  else{px(x-5,g-52,10,52,'#655c5b');px(x-22,g-75,44,22,p[3]);px(x-15,g-93,30,20,p[2])}
- }
- // Chão compacto: mais espaço vertical para o jogo.
- px(0,g,W,H-g,'#675242');px(0,g,W,9,p[4]);px(0,g+9,W,5,'#82bfd5');
- for(let i=0;i<Math.ceil(W/39)+2;i++){
-  const x=i*39-(cam%39);px(x,g+21+(i%3)*9,19,5,'#95745b');px(x+9,g+54+(i%2)*6,14,5,'#493d36')
- }
+ // Terreno com textura e sombras, preservando a altura original das colisões.
+ rect(0,g,W,H-g,icy?'#514b4a':warm?'#8b644a':'#4e594a');
+ rect(0,g,W,4,icy?'#ffffff':p[4]);rect(0,g+4,W,6,icy?'#c5ebf7':p[3]);rect(0,g+10,W,4,'#32485c');
+ for(let i=-1;i<Math.ceil(W/35)+2;i++){const x=i*35-(cam%35);px(x,g+22+(i%3)*8,17,4,'#967961');px(x+11,g+49+(i%2)*10,12,5,'#3c4141')}
+ // Detalhes decorativos: não são perigosos nem alteram a física.
+ for(let i=-1;i<Math.ceil(W/125)+2;i++){let x=i*125-(cam%125)+35;const seed=i+Math.floor(cam/125);if(icy){if(i%3===0)artRock(x,g-1,.6);else if(i%3===1)artSnowdrift(x-15,g,35);else artCrystal(x,g)}else if(forest){if(i%2===0)artRock(x,g,.6);else{px(x,g-13,4,13,'#3d7750');px(x-7,g-18,17,8,'#7fc998')}}else if(i%3===0)artRock(x,g,.6)}
+ // Pequenos postes em vilas e ruínas, no plano de fundo.
+ if(icy&&z.level===0){for(let i=0;i<12;i++){const x=i*220+145-cam;if(x>-30&&x<W+30)artLantern(x,g)}}
  for(const h of hazards){let x=h.x-cam;for(let k=0;k<4;k++){
   px(x+k*16,g-17,14,17,'#31546b');px(x+k*16+3,g-22,8,16,'#a8ecff');px(x+k*16+6,g-29,3,10,'#f5ffff')
  }}
  for(const plat of platforms){let x=plat.x+(plat.moving?Math.sin(frame*.023+plat.offset)*45:0)-cam;
-  px(x,plat.y,plat.w,15,'#3b5b6c');px(x,plat.y,plat.w,6,p[4]);
-  for(let k=8;k<plat.w;k+=21)px(x+k,plat.y+8,8,4,'#7a9ba9')
+  px(x-3,plat.y+3,plat.w+6,17,'#24374d');px(x,plat.y,plat.w,11,icy?'#7097aa':'#8e785f');px(x,plat.y,plat.w,5,icy?'#f5ffff':p[4]);px(x+3,plat.y+5,plat.w-6,3,icy?'#acd9e9':'#b6a486');for(let k=9;k<plat.w-8;k+=21){px(x+k,plat.y+12,8,3,'#344b5e');px(x+k+3,plat.y+16,4,3,'#6b8b9b')}
  }
  for(const c of coins){if(c.taken)continue;let x=c.x-cam,y=c.y+Math.sin(frame*.06+c.x)*3;
   px(x-8,y-10,16,20,'#9b5d22');px(x-5,y-12,10,23,'#ffd34c');px(x-2,y-7,4,12,'#fff2a3')
  }
  for(const e of enemies){if(e.alive)pixelEnemy(e.x-cam,g-(e.flying?105+Math.sin(frame*.035+e.base)*16:21),wi+Math.floor(stage/3),e.flying)}
  for(const q of z.quests){let x=q.x-cam,y=g-132,solved=progress.solved.includes(q.id)||(q.isBossSeal&&battle&&battle.shield);
-  px(x-27,y-3,54,48,'#33243b');px(x-24,y,48,42,solved?'#326e91':'#a65713');
-  px(x-20,y+4,40,34,solved?'#70c5e6':'#ffd044');px(x-18,y+5,36,5,solved?'#c9f4ff':'#fff0a4');
+  px(x-29,y-5,58,52,'#192d43');px(x-26,y-2,52,46,solved?'#326e91':'#a65713');
+  px(x-22,y+2,44,38,solved?'#70c5e6':'#ffd044');px(x-20,y+3,40,5,solved?'#c9f4ff':'#fff0a4');px(x-23,y+6,4,4,'#fff6c8');px(x+18,y+32,4,4,'#70451d');
   pixelBlockSymbol(solved?'✓':(q.symbol||'½'),x,y+30,solved)
  }
  const exit=z.length-60-cam;px(exit-10,g-94,20,94,'#374b74');px(exit-25,g-113,50,22,'#1c3558');px(exit-19,g-107,38,11,'#f6ce67');pixelText('➜',exit,g-94,17,'#2b405e');
  if(z.encounter&&battle){let x=z.length-290-cam,y=g-105;if(!battle.won){
-  px(x-42,y-39,84,78,'#283852');px(x-36,y-43,72,72,z.encounter.color);
-  px(x-48,y-52,25,26,z.encounter.color);px(x+23,y-52,25,26,z.encounter.color);
-  px(x-18,y-12,10,10,'#1b2234');px(x+8,y-12,10,10,'#1b2234');
+  artBoss(x,y,wi,z.encounter.color,frame);
   for(let k=0;k<battle.max;k++)px(x-battle.max*13+k*26,y-75,22,8,k<battle.hp?'#ff6170':'#52647b');
   pixelText(battle.shield?'VULNERÁVEL':'ESCUDO ATIVO',x,y-84,12,battle.shield?'#baffc7':'#ffe9a2')
  }else pixelText('★ VENCIDO ★',x,y,18,'#d9ffba')}
  for(const shot of projectiles){px(shot.x-cam-9,shot.y-9,18,18,'#422f67');px(shot.x-cam-6,shot.y-6,12,12,'#e2b0ff')}
  if(player.inv<=0||Math.floor(frame/5)%2===0)pixelSprite(player.x-cam,player.y,profile.coat,profile.skin,profile.hair,player.face,player.grounded&&Math.abs(player.vx)>1?Math.round(Math.sin(frame*.5)*3):0);
  if(wi===0)for(const snow of particles)px(snow.x,snow.y,3,3,'#ffffffa0');
- if(near)pixelText('↑ CAIXA MATEMÁTICA',W/2,58,13,'#ffffff');
+
 }
 
 function loop(t){requestAnimationFrame(loop);if($('game').classList.contains('hidden')){last=t;return}let dt=Math.min(2.1,(t-(last||t))/16.67);last=t;if(!dialog)tick(dt);draw()}requestAnimationFrame(loop);let installPrompt=null;
